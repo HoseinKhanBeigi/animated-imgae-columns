@@ -11,3 +11,7 @@ export interface photosState {
   currentRequestId: any;
   photos: any[];
 }
+
+export interface SlideNavigationProps {
+  navigation: (val: string) => void;
+}

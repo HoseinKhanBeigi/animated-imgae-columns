@@ -37,7 +37,7 @@ const photosSlice = createSlice({
         ];
         state.entities.map((e, number) => {
           state.photos.push({
-            url: e.urls.full,
+            url: e.urls.regular,
             // dataSort: state.entities.length - number,
             desc: desc[number],
             title: e.user.name,
