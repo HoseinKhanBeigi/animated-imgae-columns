@@ -33,7 +33,6 @@ const Demo1 = ({ }) => {
             dispatch(fetchPhotos({ page: "1" }));
         }
     }, [dispatch, status]);
-    console.log(photos, "photos");
 
     return (
         <SlideShowOne status={status} photos={photos} />

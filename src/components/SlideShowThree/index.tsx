@@ -7,10 +7,10 @@ import {
 import { withInitialFetch } from "../hoc";
 import FigureMain from "../mainFigure";
 import { SlideNavigation } from "../slideNav"
-import { calculatePathTwo, debounce } from "../../utils";
+import { calculatePathThree, debounce } from "../../utils";
 import anime from "animejs";
 
-const SlideShowTwo = ({ photos, status, settings }: any) => {
+const SlideShowThree = ({ photos, status, settings }: any) => {
     const slideShowElemeny: React.MutableRefObject<HTMLDivElement | any> =
         useRef();
     const slides: React.MutableRefObject<HTMLDivElement | any> = useRef();
@@ -38,17 +38,28 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
         const rect = slideShowElemeny.current.getBoundingClientRect();
         svg.current = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         paths.current = {
-            initial: calculatePathTwo("initial", rect),
-            final: calculatePathTwo("final", rect),
+            initial: calculatePathThree("initial", rect),
+            final: calculatePathThree("final", rect),
         };
         svg.current.setAttribute("class", "shape");
         svg.current.setAttribute("width", "100%");
         svg.current.setAttribute("height", "100%");
         svg.current.setAttribute("viewbox", `0 0 ${rect.width} ${rect.height}`);
         let parentDiv = nav.current.parentNode;
-        svg.current.innerHTML = `<path fill="${settings.frameFill}" d="${paths.current.initial}"/>`;
+        svg.current.innerHTML = `<defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ED4264">
+                <!--animate attributeName="stop-color" values="#ED4264; #FFEDBC; #ED4264" dur="3s" repeatCount="indefinite"></animate-->
+            </stop>
+            <stop offset="100%" stop-color="#FFEDBC">
+                <!--animate attributeName="stop-color" values="#FFEDBC; #ED4264; #FFEDBC" dur="3s" repeatCount="indefinite"></animate-->
+            </stop>
+        </linearGradient>
+        </defs>
+        <path fill="${settings.frameFill}" d="${paths.current.initial}"/>
+    `;
         parentDiv.insertBefore(svg.current, nav.current);
-        shape.current = svg.current.lastElementChild;
+        shape.current = svg.current.querySelector('path')
     }, []);
 
     const initEvents = () => {
@@ -62,13 +73,10 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
 
     const updateFrame = useCallback(() => {
         const rect = slideShowElemeny.current.getBoundingClientRect();
-        paths.current.initial = calculatePathTwo("initial", rect);
-        paths.current.final = calculatePathTwo("final", rect);
+        paths.current.initial = calculatePathThree("initial", rect);
+        paths.current.final = calculatePathThree("final", rect);
         svg.current.setAttribute("viewbox", `0 0 ${rect.width} ${rect.height}`);
-        shape.current.setAttribute(
-            "d",
-            isAnimating.current ? paths.current.final : paths.current.initial
-        );
+        shape.current.setAttribute("d", paths.current.initial);
     }, [])
 
     const navigation = useCallback((dir: string) => {
@@ -76,12 +84,30 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
         isAnimating.current = true;
         const currentSlide = [...slides.current.children][index.current];
         const rect = slideShowElemeny.current.getBoundingClientRect();
-        const animateShapeIn = anime({
-            targets: shape.current,
+        const animateShapeInTimeline = anime.timeline({
             duration: settings.animation.shape.duration,
-            easing: settings.animation.shape.easing.in,
-            d: dir === "next" ? paths.current.final.next : paths.current.final.prev,
+            easing: settings.animation.shape.easing.in
         });
+        animateShapeInTimeline
+            .add({
+                targets: shape.current,
+                d: paths.current.final.step1
+            })
+            .add({
+                targets: shape.current,
+                d: paths.current.final.step2,
+                offset: `-=${settings.animation.shape.duration * .5}`
+            })
+            .add({
+                targets: shape.current,
+                d: paths.current.final.step3,
+                offset: `-=${settings.animation.shape.duration * .5}`
+            })
+            .add({
+                targets: shape.current,
+                d: paths.current.final.step4,
+                offset: `-=${settings.animation.shape.duration * .5}`
+            });
 
 
         const animateSlides = () => {
@@ -90,7 +116,7 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
                     targets: currentSlide,
                     duration: settings.animation.slides.duration,
                     easing: settings.animation.slides.easing,
-                    translateX: dir === "next" ? -1 * rect.width : rect.width,
+                    translateX: dir === 'next' ? -1 * rect.width : rect.width,
                     complete: () => {
                         currentSlide.classList.remove("slide--current");
                         resolve();
@@ -112,10 +138,7 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
                     targets: newSlide,
                     duration: settings.animation.slides.duration,
                     easing: settings.animation.slides.easing,
-                    translateX: [
-                        dir === "next" ? rect.width : -1 * rect.width,
-                        0,
-                    ],
+                    translateX: [dir === 'next' ? rect.width : -1 * rect.width, 0]
                 });
 
                 const newSlideImg = newSlide.querySelector(".slide__img");
@@ -123,10 +146,8 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
                 anime({
                     targets: newSlideImg,
                     duration: settings.animation.slides.duration * 4,
-                    easing: "easeOutElastic",
-                    elasticity: 350,
-                    scale: [1.2, 1],
-                    rotate: [dir === "next" ? 4 : -4, 0],
+                    easing: settings.animation.slides.easing,
+                    translateX: [dir === 'next' ? 200 : -200, 0]
                 });
 
                 const texts = [
@@ -138,29 +159,45 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
                 texts.map((e) => {
                     anime({
                         targets: e,
-                        duration: settings.animation.slides.duration,
+                        duration: settings.animation.slides.duration * 2,
                         easing: settings.animation.slides.easing,
-                        delay: (t, i, total) =>
-                            dir === "next" ? i * 100 + 750 : (total - i - 1) * 100 + 750,
-                        translateY: [dir === "next" ? 300 : -300, 0],
-                        rotate: [15, 0],
-                        opacity: [0, 1],
+                        delay: (t, i) => i * 100 + 100,
+                        translateX: [dir === 'next' ? 300 : -300, 0],
+                        opacity: [0, 1]
                     });
                 });
             });
         };
 
         const animateShapeOut = () => {
-            anime({
-                targets: shape.current,
+            const animateShapeOutTimeline = anime.timeline({
                 duration: settings.animation.shape.duration,
-                delay: 150,
-                easing: settings.animation.shape.easing.out,
-                d: paths.current.initial,
-                complete: () => (isAnimating.current = false),
+                easing: settings.animation.shape.easing.out
             });
-        };
-        animateShapeIn.finished.then(animateSlides).then(animateShapeOut);
+            animateShapeOutTimeline
+                .add({
+                    targets: shape.current,
+                    d: paths.current.final.step3
+                })
+                .add({
+                    targets: shape.current,
+                    d: paths.current.final.step2,
+                    offset: `-=${settings.animation.shape.duration * .5}`
+                })
+                .add({
+                    targets: shape.current,
+                    d: paths.current.final.step1,
+                    offset: `-=${settings.animation.shape.duration * .5}`
+                })
+                .add({
+                    targets: shape.current,
+                    d: paths.current.initial,
+                    offset: `-=${settings.animation.shape.duration * .5}`,
+                    complete: () => isAnimating.current = false
+                });
+        }
+
+        animateShapeInTimeline.finished.then(animateSlides).then(animateShapeOut);
     }, []);
 
 
@@ -181,4 +218,4 @@ const SlideShowTwo = ({ photos, status, settings }: any) => {
     );
 };
 
-export default SlideShowTwo
+export default SlideShowThree

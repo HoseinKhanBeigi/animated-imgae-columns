@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from "react";
-import SlideShowTwo from "../../components/SLideShowTwo";
+import SlideShowTwo from "../../components/SlideShowTwo";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotosTwo } from "../../store/actions";
 const Demo2 = () => {
@@ -25,8 +25,10 @@ const Demo2 = () => {
             dispatch(fetchPhotosTwo({ page: "2" }));
         }
     }, [dispatch, status]);
+
+
     return (
-        <SlideShowTwo {...settings} status={status} photos={photosTwo} />
+        <SlideShowTwo settings={settings} status={status} photos={photosTwo} />
     )
 }
 export default Demo2
