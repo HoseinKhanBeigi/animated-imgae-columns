@@ -1,9 +1,9 @@
 import { http } from "../services/http";
 import { AxiosResponse } from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-export const createAsyncAction = (url: string) => {
+export const createAsyncAction = (url: string, type: string) => {
   //url as a type for first parameter of createAsyncThunk
-  return createAsyncThunk(url, async (data: any, thunkAPI) => {
+  return createAsyncThunk(type, async (data: any, thunkAPI) => {
     const { page } = data;
     try {
       const response: AxiosResponse<any, any> | void = await http.get(url, {

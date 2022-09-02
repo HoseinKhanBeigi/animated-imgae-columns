@@ -1,8 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import photoSlice from "./slices/photoSlice";
+import photosSliceTwo from "./slices/photoSliceTwo";
 
 const rootReducer = combineReducers({
   photoSlice,
+  photosSliceTwo,
 });
 export const store = configureStore({
   reducer: rootReducer,

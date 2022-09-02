@@ -1,28 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchPhotos } from "../../actions";
-import { photosState } from "../../../types";
+import { fetchPhotosTwo } from "../../actions";
+import { photosStateTwo } from "../../../types";
 
-const initialState: photosState = {
-  entities: [] as any,
+const initialState: photosStateTwo = {
+  entitiesTwo: [] as any,
   status: "idle",
   currentRequestId: "",
   error: null,
-  photos: [],
+  photosTwo: [],
 };
 
-const photosSlice = createSlice({
+const photosSliceTwo = createSlice({
   name: "photosTwo",
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(fetchPhotos.pending, (state, action) => {
+      .addCase(fetchPhotosTwo.pending, (state, action) => {
         state.status = "pending";
-        state.entities = [];
+        state.entitiesTwo = [];
       })
-      .addCase(fetchPhotos.fulfilled, (state, action) => {
+      .addCase(fetchPhotosTwo.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.entities = [...action.payload];
+        state.entitiesTwo = [...action.payload];
         const desc = [
           "A matter of delicate proportions and aesthetics.",
           "The thoughtful making of space is an art.",
@@ -35,16 +35,17 @@ const photosSlice = createSlice({
           "The main challenge is finding the right balance.",
           "Put the right minds together and imagine infinity",
         ];
-        state.entities.map((e, number) => {
-          state.photos.push({
+        state.entitiesTwo.map((e, number) => {
+          state.photosTwo.push({
             url: e.urls.regular,
             // dataSort: state.entities.length - number,
             desc: desc[number],
             title: e.user.name,
+            page: 2,
           });
         });
       })
-      .addCase(fetchPhotos.rejected, (state, action) => {
+      .addCase(fetchPhotosTwo.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });
@@ -53,4 +54,4 @@ const photosSlice = createSlice({
 
 // export const { reducePrevius } = photosSlice.actions
 
-export default photosSlice.reducer;
+export default photosSliceTwo.reducer;

@@ -30,4 +30,4 @@ const FigureMain = ({ url, title, desc }: any) => {
     );
 };
 
-export default memo(FigureMain);
+export default FigureMain;

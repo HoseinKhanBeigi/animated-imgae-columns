@@ -12,6 +12,14 @@ export interface photosState {
   photos: any[];
 }
 
+export interface photosStateTwo {
+  entitiesTwo: any[];
+  status: "idle" | "pending" | "succeeded" | "failed";
+  error: any;
+  currentRequestId: any;
+  photosTwo: any[];
+}
+
 export interface SlideNavigationProps {
   navigation: (val: string) => void;
 }

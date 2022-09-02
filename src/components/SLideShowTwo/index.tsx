@@ -1,6 +1,5 @@
 import {
     useCallback,
-    useEffect,
     useLayoutEffect,
     useMemo,
     useRef,
@@ -8,11 +7,10 @@ import {
 import { withInitialFetch } from "../hoc";
 import FigureMain from "../mainFigure";
 import { SlideNavigation } from "../slideNav"
-import { calculatePath, debounce } from "../../utils";
-import gsap from "gsap";
+import { calculatePathTwo, debounce } from "../../utils";
 import anime from "animejs";
 
-const SlideShow = ({ photos, status }: any) => {
+const SlideShowTwo = ({ photos, status }: any) => {
     const slideShowElemeny: React.MutableRefObject<HTMLDivElement | any> =
         useRef();
     const slides: React.MutableRefObject<HTMLDivElement | any> = useRef();
@@ -38,17 +36,17 @@ const SlideShow = ({ photos, status }: any) => {
         const rect = slideShowElemeny.current.getBoundingClientRect();
         svg.current = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         paths.current = {
-            initial: calculatePath("initial", rect),
-            final: calculatePath("final", rect),
+            initial: calculatePathTwo("initial", rect),
+            final: calculatePathTwo("final", rect),
         };
         svg.current.setAttribute("class", "shape");
         svg.current.setAttribute("width", "100%");
         svg.current.setAttribute("height", "100%");
         svg.current.setAttribute("viewbox", `0 0 ${rect.width} ${rect.height}`);
         let parentDiv = nav.current.parentNode;
-        svg.current.innerHTML = `<path fill=""#f1f1f1"" d="${paths.current.initial}"/>`;
+        svg.current.innerHTML = `<path fill=""#111"" d="${paths.current.initial}"/>`;
         parentDiv.insertBefore(svg.current, nav.current);
-        shape.current = svg.current.querySelector("path");
+        shape.current = svg.current.lastElementChild;
     }, []);
 
     const initEvents = () => {
@@ -60,29 +58,29 @@ const SlideShow = ({ photos, status }: any) => {
         );
     };
 
-    const updateFrame = () => {
+    const updateFrame = useCallback(() => {
         const rect = slideShowElemeny.current.getBoundingClientRect();
-        paths.current.initial = calculatePath("initial", rect);
-        paths.current.final = calculatePath("final", rect);
+        paths.current.initial = calculatePathTwo("initial", rect);
+        paths.current.final = calculatePathTwo("final", rect);
         svg.current.setAttribute("viewbox", `0 0 ${rect.width} ${rect.height}`);
         shape.current.setAttribute(
             "d",
             isAnimating.current ? paths.current.final : paths.current.initial
         );
-    };
+    }, [])
 
-    const navigation = (dir: string) => {
+    const navigation = useCallback((dir: string) => {
         if (isAnimating.current) return false;
         isAnimating.current = true;
         const currentSlide = [...slides.current.children][index.current];
-
+        const rect = slideShowElemeny.current.getBoundingClientRect();
         const animateShapeIn = anime({
             targets: shape.current,
             duration: 1000,
             easing: "easeOutQuint",
             d: paths.current.final,
         });
-        const rect = slideShowElemeny.current.getBoundingClientRect();
+
 
         const animateSlides = () => {
             return new Promise<void>((resolve, reject) => {
@@ -154,7 +152,8 @@ const SlideShow = ({ photos, status }: any) => {
             });
         };
         animateShapeIn.finished.then(animateSlides).then(animateShapeOut);
-    };
+    }, []);
+
 
     return (
         <div className="slideshow" ref={slideShowElemeny}>
@@ -173,4 +172,4 @@ const SlideShow = ({ photos, status }: any) => {
     );
 };
 
-export default withInitialFetch(SlideShow);
+export default SlideShowTwo
