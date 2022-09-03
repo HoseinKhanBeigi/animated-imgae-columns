@@ -97,8 +97,6 @@ class Http {
   private handleError(error: { status: any }) {
     const { status } = error;
 
-    // console.log(error, "errrrrrrrrrrrrr");
-
     switch (status) {
       case StatusCode.InternalServerError: {
         // Handle InternalServerError

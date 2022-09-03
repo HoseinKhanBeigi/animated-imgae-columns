@@ -26,7 +26,6 @@ const Demo1 = ({ }) => {
     }, []);
     const dispatch = useAppDispatch();
     const { status, photos } = useAppSelector((state) => state.photoSlice);
-    console.log(status);
 
     useEffect(() => {
         if (status === "idle") {

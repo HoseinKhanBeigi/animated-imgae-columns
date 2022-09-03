@@ -1,15 +1,25 @@
-import React, { useRef } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import React, { useRef, useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import "./index.scss"
 const Layout = ({ }) => {
     const path = useLocation();
+    const params = useParams();
+    const history = useNavigate();
     const classes = path.pathname.startsWith('/') && path.pathname.slice(1, path.pathname.length)
     const root: React.MutableRefObject<HTMLDivElement | any> = useRef();
     const handleClick = (value: any) => {
         [...root.current.querySelectorAll(".demo")].forEach((e) => {
             e.classList.remove("demo--current")
         });
+        value.target.classList.add("demo--current");
     }
+
+    useEffect(() => {
+        if (path.pathname === "/") {
+            history(`/demo-1`);
+            [...root.current.querySelectorAll(".demo")][0].classList.add("demo--current")
+        }
+    }, [path.pathname])
 
     return (
         <main className={`${classes}`}>

@@ -187,7 +187,7 @@ const SlideShowFour = ({ photos, status, settings }: any) => {
         <div className="slideshow" ref={slideShowElemeny}>
             <div className="slides" ref={slides}>
                 {photos.map((el: any, num: number) => (
-                    <div className="slide">
+                    <div className="slide" key={num}>
                         <img
                             className={"slide__img"}
                             src={el.url}
@@ -204,7 +204,7 @@ const SlideShowFour = ({ photos, status, settings }: any) => {
             </div>
             <div className="slides slides--titles" ref={titles}>
                 {photos.map((el: any, num: number) => (
-                    <div className="slide">
+                    <div className="slide" key={num}>
                         <h2 className="slide__title"> {el.title}</h2>
                     </div>
                 ))}

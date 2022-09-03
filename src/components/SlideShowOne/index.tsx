@@ -58,8 +58,6 @@ const SlideShowOne = ({ photos, status }: any) => {
     };
 
     const updateFrame = useCallback(() => {
-        console.log("helll");
-
         const rect = slideShowElemeny.current.getBoundingClientRect();
         paths.current.initial = calculatePath("initial", rect);
         paths.current.final = calculatePath("final", rect);
@@ -154,8 +152,6 @@ const SlideShowOne = ({ photos, status }: any) => {
         };
         animateShapeIn.finished.then(animateSlides).then(animateShapeOut);
     }, []);
-
-    console.log(photos[0]?.url, "one");
 
 
     return (
