@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from "react";
-import SlideShowTwo from "../../components/SlideShowTwo";
+import SlideShowTwo from "components/SlideShowTwo";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotosTwo } from "../../store/actions";
 export const Demo2 = () => {
