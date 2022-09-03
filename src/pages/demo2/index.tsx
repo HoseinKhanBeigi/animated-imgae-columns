@@ -2,6 +2,7 @@ import { useMemo, useEffect } from "react";
 import SlideShowTwo from "../../components/slideShowTwo";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotosTwo } from "../../store/actions";
+
 export const Demo2 = () => {
     const settings = useMemo(() => {
         return {
