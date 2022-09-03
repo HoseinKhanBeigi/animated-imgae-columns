@@ -7,7 +7,7 @@ import { slide } from "../../types";
 
 // import "./index.scss"
 
-const Demo1 = ({ }) => {
+export const Demo1 = ({ }) => {
     const path = useLocation();
     const settings = useMemo(() => {
         return {
@@ -37,4 +37,4 @@ const Demo1 = ({ }) => {
         <SlideShowOne status={status} photos={photos} />
     );
 };
-export default Demo1;
+

@@ -1,12 +1,12 @@
 import { Routes, Route, Router } from "react-router-dom";
 import "./App.css";
 import Layout from "./components/layout";
-import Demo1 from "./pages/demo1";
-import Demo2 from "./pages/demo2";
-import Demo3 from "./pages/demo3";
-import Demo4 from "./pages/demo4";
-import Demo5 from "./pages/demo5";
-import Demo6 from "./pages/demo6";
+import { Demo1 } from "./pages/demo1";
+import { Demo2 } from "./pages/demo2";
+import { Demo3 } from "./pages/demo3";
+import { Demo4 } from "./pages/demo4";
+import { Demo5 } from "./pages/demo5";
+import { Demo6 } from "./pages/demo6";
 
 
 

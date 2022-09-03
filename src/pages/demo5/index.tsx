@@ -2,7 +2,7 @@ import { useMemo, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotosFive } from "../../store/actions";
 import SlideShowFive from "../../components/SlideShowFive";
-const Demo5 = () => {
+export const Demo5 = () => {
     const settings = useMemo(() => {
         return {
             animation: {
@@ -31,4 +31,3 @@ const Demo5 = () => {
         <SlideShowFive settings={settings} status={status} photos={photosFive} />
     )
 }
-export default Demo5
