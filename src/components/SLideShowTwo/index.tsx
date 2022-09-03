@@ -4,7 +4,6 @@ import {
     useMemo,
     useRef,
 } from "react";
-import { withInitialFetch } from "../hoc";
 import FigureMain from "../mainFigure";
 import { SlideNavigation } from "../slideNav"
 import { calculatePathTwo, debounce } from "../../utils";

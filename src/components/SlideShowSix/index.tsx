@@ -1,6 +1,4 @@
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { withInitialFetch } from "../hoc";
-import FigureMain from "../mainFigure";
 import { SlideNavigation } from "../slideNav";
 import { calculatePathSix, debounce } from "../../utils";
 import anime from "animejs";
