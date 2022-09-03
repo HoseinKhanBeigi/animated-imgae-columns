@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotosThree } from "../../store/actions";
-import SlideShowThree from "../../components/SlideShowThree"
+import SlideShowThree from "../../components/slideShowThree"
 export const Demo3 = () => {
     const settings = useMemo(() => {
         return {

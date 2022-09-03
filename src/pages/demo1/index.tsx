@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from "react";
 import { Routes, Route, Link, Outlet, useLocation } from "react-router-dom";
-import SlideShowOne from "../../components/SlideShowOne";
+import SlideShowOne from "../../components/slideShowOne";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import { fetchPhotos } from "../../store/actions";
 import { slide } from "../../types";
