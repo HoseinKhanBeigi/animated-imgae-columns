@@ -23,24 +23,21 @@ const photosSlice = createSlice({
       .addCase(fetchPhotos.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.entities = [...action.payload];
-        const desc = [
-          "A matter of delicate proportions and aesthetics.",
-          "The thoughtful making of space is an art.",
-          "If a building becomes architecture, then it is art.",
-          "Architecture is a visual art, and the buildings speak for themselves.",
-          "Find out why so many travelers always come back.",
-          "Untouched natural beauty makes this place unique.",
-          "Leave society behind and indulge yourself in tranquility",
-          "Discover great activities with breathtaking views.",
-          "The main challenge is finding the right balance.",
-          "Put the right minds together and imagine infinity",
-        ];
+        let a = 0;
+        let z = 0;
+        let k = 0;
         state.entities.map((e, number) => {
+          z = state.entities[0] + a;
+          k = state.entities[number + 1] + a;
+          if (k - z !== 3) {
+            a += 2;
+          }
+          z = number + a;
           state.photos.push({
-            url: e.urls.regular,
-            // dataSort: state.entities.length - number,
-            desc: desc[number],
-            title: e.user.name,
+            url: e.urls.small,
+            dataSort: z,
+            date: new Date(2000 + number).getFullYear(),
+            name: e.user.name,
           });
         });
       })
