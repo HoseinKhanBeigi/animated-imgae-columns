@@ -1,33 +1,34 @@
 import { useMemo, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
-import { fetchPhotosThree } from "../../store/actions";
-import SlideShowThree from "../../components/SlideShowThree"
-const Demo3 = () => {
+import { fetchPhotosSix } from "../../store/actions";
+import SlideShowSix from "../../components/SlideShowSix";
+const Demo6 = () => {
     const settings = useMemo(() => {
         return {
             animation: {
                 slides: {
-                    duration: 600,
+                    duration: 500,
                     easing: 'easeOutQuint'
                 },
                 shape: {
                     duration: 300,
-                    easing: { in: 'easeOutQuad', out: 'easeOutQuad' }
+                    easing: { in: 'easeOutQuint', out: 'easeOutQuad' }
                 }
             },
             frameFill: 'url(#gradient1)'
-        }
-    }, [])
+        };
+    }, []);
     const dispatch = useAppDispatch();
-    const { status, photosThree } = useAppSelector((state) => state.photosSliceThree);
+    const { status, photosSix } = useAppSelector(
+        (state) => state.photosSliceSix
+    );
     useEffect(() => {
         if (status === "idle") {
-            dispatch(fetchPhotosThree({ page: "3" }));
+            dispatch(fetchPhotosSix({ page: "6" }));
         }
     }, [dispatch, status]);
-
     return (
-        <SlideShowThree settings={settings} status={status} photos={photosThree} />
+        <SlideShowSix settings={settings} status={status} photos={photosSix} />
     )
 }
-export default Demo3
+export default Demo6
