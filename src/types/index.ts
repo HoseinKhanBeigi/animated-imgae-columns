@@ -4,6 +4,13 @@ export interface slide {
   name: string;
 }
 
+export interface FigureImgProps {
+  dataPos: string;
+  url: string;
+  name: string;
+  date: string;
+}
+
 export interface photosState {
   entities: any[];
   status: "idle" | "pending" | "succeeded" | "failed";
