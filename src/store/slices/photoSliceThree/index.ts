@@ -34,7 +34,7 @@ const photosSliceThree = createSlice({
           }
           z = a;
           state.photosThree.push({
-            url: e.urls.regular,
+            url: e.urls.small,
             dataSort: a,
             name: e.user.name,
             date: new Date("1990" + number).getFullYear(),

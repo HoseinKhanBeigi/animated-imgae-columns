@@ -9,6 +9,7 @@ export interface FigureImgProps {
   url: string;
   name: string;
   date: string;
+  showContent: (value: any) => void;
 }
 
 export interface photosState {

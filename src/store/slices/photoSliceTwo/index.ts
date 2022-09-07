@@ -34,7 +34,7 @@ const photosSliceTwo = createSlice({
           }
           z = number + a;
           state.photosTwo.push({
-            url: e.urls.regular,
+            url: e.urls.small,
             dataSort: z + number,
             date: new Date("1990" + number).getFullYear(),
             name: e.user.name,
