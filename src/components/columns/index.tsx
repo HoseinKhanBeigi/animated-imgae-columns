@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FigureImg } from "../figure";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
+import { usePreLoadImg } from "../../hooks/usePreloadImg"
 import {
     fetchPhotos,
     fetchPhotosTwo,
@@ -39,6 +40,7 @@ export const Columns = () => {
             three: state.photosSliceThree,
         };
     });
+    const imgsLoaded = usePreLoadImg([...one.photos, ...two.photosTwo, ...three.photosThree]);
 
     useEffect(() => {
         if (one.status === "idle") {
@@ -420,6 +422,7 @@ export const Columns = () => {
                             date={e.date}
                             name={e.name}
                             showContent={showContent}
+                            imgsLoaded={imgsLoaded}
                         />
                     ))}
                 </div>
@@ -434,6 +437,7 @@ export const Columns = () => {
                             date={e.date}
                             name={e.name}
                             showContent={showContent}
+                            imgsLoaded={imgsLoaded}
                         />
                     ))}
                 </div>
@@ -448,6 +452,7 @@ export const Columns = () => {
                             date={e.date}
                             name={e.name}
                             showContent={showContent}
+                            imgsLoaded={imgsLoaded}
                         />
                     ))}
                 </div>
@@ -490,3 +495,5 @@ export const Columns = () => {
         </div>
     );
 };
+
+

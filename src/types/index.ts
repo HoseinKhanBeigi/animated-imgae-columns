@@ -10,6 +10,7 @@ export interface FigureImgProps {
   name: string;
   date: string;
   showContent: (e: MouseEvent, value: any) => void;
+  imgsLoaded: boolean;
 }
 
 export interface photosState {
