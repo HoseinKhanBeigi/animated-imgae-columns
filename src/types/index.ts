@@ -9,7 +9,7 @@ export interface FigureImgProps {
   url: string;
   name: string;
   date: string;
-  showContent: (value: any) => void;
+  showContent: (e: MouseEvent, value: any) => void;
 }
 
 export interface photosState {

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FigureImg } from "../figure";
 import { useAppSelector, useAppDispatch } from "../../hooks/useDispatch";
 import {
@@ -26,11 +26,13 @@ export const Columns = () => {
     const lscroll: React.MutableRefObject<any> = useRef();
     const columnWrap: React.MutableRefObject<any> = useRef();
     const content: React.MutableRefObject<HTMLDivElement | any> = useRef();
-    const contentWarpper: React.MutableRefObject<HTMLDivElement | any> = useRef();
+    const navigationWarpper: React.MutableRefObject<HTMLDivElement | any> =
+        useRef();
     const columnItems: React.MutableRefObject<HTMLDivElement | any> = useRef();
     const isGridView: React.MutableRefObject<boolean> = useRef();
     const currentGridItem: React.MutableRefObject<any> = useRef();
     const contentNavItems: React.MutableRefObject<any> = useRef();
+    const [title, setTitle] = useState("");
     const { one, two, three } = useAppSelector((state) => {
         return {
             one: state.photoSlice,
@@ -106,7 +108,6 @@ export const Columns = () => {
         ) {
             initSmoothScroll();
             window.addEventListener("resize", () => {
-                console.log(currentGridItem.current);
                 if (currentGridItem.current) {
                     gsap.set(currentGridItem.current.el, {
                         scale: calcTransformImage(currentGridItem.current.el).scale,
@@ -157,8 +158,8 @@ export const Columns = () => {
         };
     };
 
-    const handleNavigation = (i: number) => {
-        // console.log(currentGridItem.current);
+    const handleNavigation = (i: number, name: string) => {
+        const innerText = content.current.querySelector(".oh__inner");
         const timeline = gsap.timeline({
             defaults: {
                 ease: "expo.inOut",
@@ -169,34 +170,33 @@ export const Columns = () => {
             onComplete: () => { },
         });
 
+
+
         const upcomingItem = [...columnItems.current].find((e, idx) => {
-            return idx === i
+            if (idx === i) {
+                return e
+            }
         });
 
         const currentItem = [...columnItems.current].find((e) => {
             if (e.getAttribute("data-current")) {
                 e.removeAttribute("data-current");
-                upcomingItem.setAttribute("data-current", "visible")
-                return e
-            };
+                upcomingItem.setAttribute("data-current", "visible");
+                return e;
+            }
         });
+
+
+
         timeline
-            .set(
-                currentItem,
-                {
-                    willChange: "transform, opacity",
-                },
-                "start"
-            )
             .to(currentItem, {
                 scale: 1,
-                x: 0,
-                y: 0,
+                x: calcTransformImage(currentItem).x,
+                y: calcTransformImage(currentItem).y,
                 duration: 1.2,
                 opacity: 0,
-
                 ease: "expo",
-            }, "+.02")
+            })
             .to(
                 upcomingItem,
                 {
@@ -205,9 +205,42 @@ export const Columns = () => {
                     opacity: 1,
                     duration: 1.2,
                     y: calcTransformImage(upcomingItem).y,
+                    onComplete: () => {
+                        [...columnItems.current].map((e) => {
+                            if (!e.getAttribute("data-current")) {
+                                timeline.to(
+                                    e,
+                                    {
+                                        opacity: 0,
+                                        scale: 1,
+                                        x: calcTransformImage(e).x,
+                                        y: calcTransformImage(e).y,
+                                    },
+                                    0
+                                );
+                            }
+                        });
+
+                    }
                 },
-                "+.2"
-            ).to(
+
+                "-=.4"
+            )
+            .to(innerText, {
+                y: "120%",
+                rotate: 15,
+            })
+            .add(() => {
+                setTitle(name);
+            })
+
+            .to(innerText, {
+                y: "0%",
+                rotate: 0,
+                stagger: 0.03,
+                duration: 1.2,
+            })
+            .to(
                 upcomingItem.querySelector(".column__item-caption"),
                 {
                     opacity: 0,
@@ -217,101 +250,165 @@ export const Columns = () => {
             );
     };
 
-    const showContent = (event: MouseEvent<HTMLElement, MouseEvent>) => {
+    const showContent = (
+        event: MouseEvent<HTMLElement, MouseEvent>,
+        name: string
+    ) => {
         lscroll.current.scroll.stop = true;
         event.stopPropagation();
+
+        setTitle(name);
+
         isGridView.current = true;
-        currentGridItem.current = [...gridItemArr.current].find((e) => {
-            return e.position === Number(event.currentTarget.children[0].dataset.pos);
+        currentGridItem.current = [...columnItems.current].find((e) => {
+            return (
+                Number(e.children[0].dataset.pos) ===
+                Number(event.currentTarget.children[0].dataset.pos)
+            );
         });
 
-        const textReveal = new TextReveal(content.current.querySelector(".oh"));
+        const remainingGridItems = [...columnItems.current].filter((e) => {
+            return (
+                Number(e.children[0].dataset.pos) !==
+                Number(event.currentTarget.children[0].dataset.pos)
+            );
+        });
+        const currentItem = event.currentTarget;
+        const backButton = content.current.querySelector(".button-back");
+        const contentItem = content.current.querySelector(".content__item");
+        const innerText = content.current.querySelector(".oh__inner");
+        const innerDesc = content.current.querySelector(".content__item-text");
 
-        const timeline = gsap
-            .timeline({
-                defaults: {
-                    ease: "expo.inOut",
-                },
-                onStart: () => {
-                    content.current.classList.add("pointerEvent");
-                },
+        const caption = event.currentTarget.querySelector(".column__item-caption");
+        gsap.killTweensOf([currentItem, remainingGridItems]);
+        const timeline = gsap.timeline({
+            defaults: {
+                ease: "expo.inOut",
+            },
+            onStart: () => {
+                gsap.set(navigationWarpper.current, { y: 100 });
+                document.body.classList.add("oh");
+            },
+        });
+
+        timeline
+            .to(currentItem, {
+                pointerEvents: "none",
+                opacity: 1,
+                scale: calcTransformImage(currentItem).scale,
+                x: calcTransformImage(currentItem).x,
+                y: calcTransformImage(currentItem).y,
+                duration: 1,
             })
-            .set([...contentWarpper.current.children], { x: "-3400%", opacity: 0 })
-            .set([...columnWrap.current], { zIndex: 0 })
-            .addLabel("start", 1)
+
             .add(() => {
-                event.target.parentNode.parentNode.setAttribute(
-                    "data-current",
-                    "visible"
-                );
+                currentItem.setAttribute("data-current", "visible");
+            })
+            .set(content.current, { opacity: 1, pointerEvents: "auto", zIndex: 1 })
+            .to(navigationWarpper.current, { y: 0, duration: 1 })
+            .to(backButton, { opacity: 1, duration: 1.2 }, "-=.3")
+            .set(innerText, {
+                y: "120%",
+                rotate: 15,
+            })
+            .add(() => {
+                contentItem.classList.add("content__item--current");
+                document.body.classList.add("view-content");
+            })
+            .to(innerText, {
+                y: "0%",
+                rotate: 0,
+                stagger: 0.03,
+                duration: 1.2,
+            })
+            .to(innerDesc, { opacity: 1, duration: 1.2 })
+            .to(caption, { opacity: 0, duration: 1.2 }, 0);
+
+        [...remainingGridItems].forEach((el, pos) => {
+            timeline
+                .to(
+                    el,
+                    { opacity: 0, pointerEvents: "none", duration: 1.2, zIndex: 0 },
+                    0
+                )
+                .set(el, { y: calcTransformImage(el).y, x: calcTransformImage(el).x });
+        });
+    };
+
+    const closeContent = () => {
+        const currentItem = [...columnItems.current].find((e) => {
+            if (e.getAttribute("data-current")) {
+                e.removeAttribute("data-current");
+                return e;
+            }
+        });
+        initSmoothScroll();
+        lscroll.current.scrollTo(lastscroll.current, {
+            duration: 0,
+            disableLerp: true,
+        });
+        const contentItem = content.current.querySelector(".content__item");
+        const innerText = content.current.querySelector(".oh__inner");
+        const backButton = content.current.querySelector(".button-back");
+        const caption = currentItem.querySelector(".column__item-caption");
+        const remainingGridItems = [...columnItems.current].filter((e) => {
+            return (
+                Number(e.children[0].dataset.pos) !==
+                Number(currentItem.children[0].dataset.pos)
+            );
+        });
+        gsap.killTweensOf([currentItem, remainingGridItems]);
+        const timeline = gsap.timeline({
+            defaults: {
+                ease: "expo.inOut",
+            },
+            onStart: () => {
+                document.body.classList.remove("oh");
+                document.body.classList.remove("view-content");
+            },
+            onComplete: function () {
+                gsap.set(remainingGridItems, { clearProps: "all" });
+                gsap.set(currentItem, { clearProps: "all" });
+            },
+        });
+
+        timeline
+            .to(navigationWarpper.current, { y: 300, duration: 1 })
+            .to(currentItem, {
+                scale: 1,
+                x: 0,
+                y: 0,
+                duration: 1,
+            })
+
+            .to(innerText, {
+                y: "-120%",
+                rotate: -5,
+                stagger: 0.03,
+            })
+
+            .to(backButton, { opacity: 0, duration: 1.2 }, 0)
+            .to(content.current, { opacity: 0, pointerEvents: "none", zIndex: 0 })
+            .to(caption, { opacity: 1, duration: 1.2 }, 0)
+            .add(() => {
+                contentItem.classList.remove("content__item--current");
             });
 
-        timeline
-            .to(
-                content.current,
-                {
-                    opacity: 1,
-                    duration: 0.1,
-                    ease: "expo",
-                },
-                "-1"
-            )
-            .to([...columnItems.current], { opacity: 0, duration: 0.3 }, 0)
-
-            .to(
-                event.currentTarget,
-                {
-                    scale: calcTransformImage(event.currentTarget).scale,
-                    x: calcTransformImage(event.currentTarget).x,
-                    opacity: 1,
-                    duration: 1.2,
-                    y: calcTransformImage(event.currentTarget).y,
-                },
-                0
-            )
-            .to(
-                event.currentTarget.querySelector(".column__item-caption"),
-                {
-                    opacity: 0,
-                    duration: 0.3,
-                },
-                0
-            );
-        for (const [position, viewportGridItem] of [
-            ...contentWarpper.current.children,
-        ].entries()) {
-            timeline.to(
-                viewportGridItem,
-                {
-                    ease: "expo",
-                    x: 0,
-                    opacity: 1,
-                    duration: 2,
-                    stagger: 0.2,
-                },
-                0
-            );
-        }
-        const text = content.current.querySelector(".content__item-text");
-        timeline
-            .addLabel("showContent", "start+=0.2")
-            .add(() => {
-                content.current
-                    .querySelector(".content__item")
-                    .classList.add("content__item--current");
-                document.body.classList.add("view-content");
-            }, "showContent")
-
-            .to(
-                text,
-                {
-                    opacity: 1,
-                },
-                "showContent"
-            )
-            .add(() => {
-                textReveal.in();
-            }, 0);
+        [...remainingGridItems].forEach((element, pos) => {
+            timeline
+                .to(
+                    element,
+                    { opacity: 1, x: 0, y: 0, duration: 1.2, pointerEvents: "auto" },
+                    2.5
+                )
+                .to(
+                    element.querySelector(".column__item-caption"),
+                    {
+                        opacity: 1,
+                    },
+                    0
+                );
+        });
     };
 
     return (
@@ -361,7 +458,7 @@ export const Columns = () => {
             <div className="content" ref={content}>
                 <div className="content__item">
                     <h2 className="content__item-title oh">
-                        <span className="oh__inner">Lucky Wood</span>
+                        <span className="oh__inner">{title}</span>
                     </h2>
                     <div className="content__item-text">
                         <span>
@@ -371,13 +468,16 @@ export const Columns = () => {
                         <span>2019</span>
                     </div>
                 </div>
+                <button className="unbutton button-back" onClick={() => closeContent()}>
+                    back
+                </button>
                 <nav className="navigation">
-                    <div className="content__nav-wrapper" ref={contentWarpper}>
+                    <div className="content__nav-wrapper" ref={navigationWarpper}>
                         {[...one.photos, ...two.photosTwo, ...three.photosThree].map(
                             (el, i) => {
                                 return (
                                     <img
-                                        onClick={() => handleNavigation(i)}
+                                        onClick={() => handleNavigation(i, el.name)}
                                         key={i}
                                         className="content__nav-item"
                                         src={el.url}

@@ -4,7 +4,7 @@ import { FigureImgProps } from "../../types"
 export const FigureImg: React.FC<FigureImgProps> = ({ dataPos, url, name, date, showContent }) => {
 
     return (
-        <figure className="column__item" onClick={showContent}>
+        <figure className="column__item" onClick={(e: any) => showContent(e, name)}>
             <div className="column__item-imgwrap" data-pos={dataPos} >
                 <img
                     className="column__item-img"
