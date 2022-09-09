@@ -12,7 +12,6 @@ import gsap from "gsap";
 import LocomotiveScroll from "locomotive-scroll";
 import { useLayoutEffect } from "react";
 import { useCallback } from "react";
-import { TextReveal } from "../textReveal";
 
 export const Columns = () => {
     const dispatch = useAppDispatch();
@@ -220,10 +219,8 @@ export const Columns = () => {
                                 );
                             }
                         });
-
                     }
                 },
-
                 "-=.4"
             )
             .to(innerText, {
